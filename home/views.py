@@ -17,13 +17,30 @@ def loginUser(request):
         password = request.POST.get('password')
         user = authenticate(username=username ,password=password)
         if user is not None:
-            login(request,user)
-            return redirect("/")
+            if user.is_superuser:
+                login(request,user)
+                return redirect("/adminpage")
+            else:
+                login(request,user)
+                return redirect("/userpage")
         else:
             return redirect("/create")
-            # return render(request,"create.html")
-
     return render(request,"login.html")
+# def loginUser(request):
+#     if request.method=="POST":
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(username=username ,password=password)
+#         if User.objects.filter(username=username).exists():
+#             if user.is_superuser:
+#                 login(request,user)
+#                 return redirect("/adminpage")
+#             else:
+#                 login(request,user)
+#                 return redirect("/userpage")
+#         else:
+#             return redirect("/create")
+#     return render(request,"login.html")
 
 def logoutUser(request):
     logout(request)
@@ -45,3 +62,9 @@ def create(request):
             user = User.objects.create_user(username=username,password=password)
             messages.success(request,"Registration Successfull.. Please Login")
     return render(request, "create.html")
+
+def adminpage(request):
+    return render(request,"adminpage.html")
+ 
+def userpage(request):
+    return render(request,"userpage.html")
